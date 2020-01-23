@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import * as firebase from 'firebase/app'
 import 'firebase/database'
+import 'firebase/auth'
 import App from './App.vue'
 
 Vue.config.productionTip = false
@@ -15,11 +16,7 @@ const firebaseConfig = {
   appId: "1:891825082097:web:d6eb074e3e77bb9e826350"
 }
 
-// Initialize Firebase
 firebase.initializeApp(firebaseConfig)
-
-// eslint-disable-next-line no-console
-// console.log(firebase.app().name)
 
 new Vue({
   render: h => h(App),

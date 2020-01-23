@@ -5,8 +5,6 @@
 </template>
 
 <script>
-// import { getSomething } from '@/api'
-// eslint-disable-next-line no-unused-vars
 import firebase from 'firebase/app'
 
 export default {
@@ -20,13 +18,13 @@ export default {
   },
 
   created() {
-    // this.view =
-    firebase.database().ref('/first/a').on('value',
-            // eslint-disable-next-line no-console
-            response => this.view = response.val()
-    )
-    // eslint-disable-next-line no-console
-    // console.log(this.view)
+    firebase
+            .database()
+            .ref('/first/a')
+            .on(
+                    'value',
+                    response => this.view = response.val()
+            )
   },
 
 }
