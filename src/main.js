@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import * as firebase from 'firebase/app'
 import 'firebase/database'
-import 'firebase/auth'
+import 'firebase/storage'
 import App from './App.vue'
 
 Vue.config.productionTip = false
