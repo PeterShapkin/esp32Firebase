@@ -5,7 +5,13 @@
             type="file"
             @change="onChangeHandler"
     >
-    <progress max="100" :value="uploader"/>
+    <progress
+            max="100"
+            :value="uploader"
+    />
+    <button @click="logOut">
+      Выйти
+    </button>
   </div>
 </template>
 
@@ -24,8 +30,7 @@
   },
 
   created() {
-    firebase
-            .database()
+    firebase.database()
             .ref('/first/a')
             .on(
                     'value',
@@ -59,6 +64,15 @@
                 console.log('success!')
               }
       )
+    },
+
+    logOut() {
+      //TODO разлогиниться
+      firebase.auth().signOut()
+
+      this.$router.push({
+        name: 'SignIn'
+      })
     }
   }
 
@@ -68,5 +82,17 @@
 <style scoped>
 .view {
   font: 700 32px Arial sans-serif;
+}
+
+button {
+  background-color: dodgerblue;
+  border-radius: 3px;
+  border: none;
+  color: white;
+  box-shadow: 2px 2px 4px grey;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 5px 10px;
+  margin-top: 20px;
 }
 </style>
