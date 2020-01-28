@@ -6,20 +6,35 @@ import Dashboard from '../components/Dashboard'
 
 Vue.use(Router)
 
-export default new Router ({
+const router = new Router ({
     routes: [
         {
             path: '/',
             name: 'SignIn',
-            component: SignIn
+            component: SignIn,
+            beforeEnter(to, from, next) {
+                if (localStorage.getItem('auth') === 'true') {
+                    next('/dashboard')
+                }
+                else {
+                    next()
+                }
+            }
         },
         {
             path: '/dashboard',
             name: 'Dashboard',
             component: Dashboard,
-            meta: {
-                requiresAuth: true
+            beforeEnter(to, from, next) {
+                if (localStorage.getItem('auth') === 'true') {
+                    next()
+                }
+                else {
+                    next('/')
+                }
             }
         }
     ]
 })
+
+export default router
