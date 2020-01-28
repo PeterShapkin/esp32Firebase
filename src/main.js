@@ -1,6 +1,8 @@
 import Vue from 'vue'
+import router from './router'
 import * as firebase from 'firebase/app'
 import 'firebase/database'
+import 'firebase/storage'
 import 'firebase/auth'
 import App from './App.vue'
 
@@ -19,5 +21,6 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig)
 
 new Vue({
+  router,
   render: h => h(App),
 }).$mount('#app')
