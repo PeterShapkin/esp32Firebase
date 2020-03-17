@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="wrapper">
         <input
                 type="email"
                 placeholder="Email"
@@ -10,24 +10,51 @@
                 placeholder="Пароль"
                 v-model="password"
         >
-        <button
-                v-if="!entering"
-                :class="{'disabled' : !email || !password }"
-                @click="toDashboard"
-                :disabled="!email || !password"
-        >
-            Войти
-        </button>
-        <div
-                class="loader"
-                v-if="entering"
+        <input
+                placeholder="MAC"
+                v-model="mac"
         >
 
+        <div class="buttonBlock">
+            <button
+                    v-if="!entering"
+                    :class="{'disabled' : !email || !password || !mac}"
+                    @click="toDashboard"
+                    :disabled="!email || !password || !mac"
+            >
+                Войти
+            </button>
+            <button
+                    v-if="!entering"
+                    :class="{'disabled' : !email || !password || !mac}"
+                    @click="logIn"
+                    :disabled="!email || !password || !mac"
+            >
+                Зарегистрироваться
+            </button>
+            <div
+                    class="loader"
+                    v-if="entering"
+            >
+
+            </div>
         </div>
+
     </div>
 </template>
 
 <script>
+    //запрос с железки - POST по урлу база/:mac (права на запись маков
+    // (то есть каждого узла верхнего уровня) = true, чтение маков = auth !== null)
+    // !! Просто авторизованный пользователь не сможет видеть чужие данные, т.к. вывод данных только введённому урлу !!
+    // ..А если он введёт чужой мак руками в адресную строку?..
+    // То есть каждый запрос будет добавлять новую запись, и на борде надо выводить
+    // записи согласно timestamp'у.
+
+    //TODO если пароль/логин неправильные
+    //TODO сделать лодер нормально
+    //TODO проверить, если есть аккаунт с такими же данными при регистрации
+
     import firebase from 'firebase/app'
 
     export default {
@@ -38,6 +65,7 @@
             return {
                 email: 'test@abc.com',
                 password: '123qwer',
+                mac: '123',
                 entering: false,
             }
         },
@@ -57,11 +85,53 @@
                             this.email = ''
                             this.password = ''
 
+
                             this.$router.push({
                                 name: 'Dashboard',
+                                params: {
+                                    mac: this.mac
+                                }
                             })
+
+                            this.mac = ''
                         },
                     )
+            },
+
+            logIn() {
+
+                this.entering = true
+
+                firebase.auth()
+                    .createUserWithEmailAndPassword(this.email, this.password)
+                    .then(
+                        () => {
+                            // Если в FirebaseRD ещё нет узла с названием
+                            // введённого MAC'а...
+                            if (!firebase.database().ref('/' + this.mac).key){
+
+                                // создаём узел в FirebaseRD, где имя узла -
+                                // это регистрируемый MAC:
+                                firebase.database()
+                                    .ref('/' + this.mac)
+                                    .set('')
+
+                                // создаём запись в группе 'users', чтобы при авторизации
+                                // сопоставить введённый email с MAC-адресом и направить
+                                // нужные данные:
+                                firebase.database()
+                                    .ref('users/')
+                                    .set({
+                                        userEmail: this.email,
+                                        mac: this.mac
+                                    })
+                            }
+                            else {
+                                console.log('Такой MAC-адрес уже зарегистрирован.')
+                            }
+                        }
+                    )
+
             }
         }
     }
@@ -70,9 +140,16 @@
 <style scoped lang="stylus">
 @import '../styles/loader.styl'
 
-div
+
+.wrapper
     width 20%
     margin 40vh auto auto
+
+
+.buttonBlock
+    display flex
+    justify-content center
+    margin-top 30px
 
 
 input
@@ -94,8 +171,10 @@ button
     font-size 15px
     font-weight 500
     padding 5px 10px
-    margin-top 20px
     outline none
+
+    &:first-child
+        margin-right 20px
 
     &:active
         box-shadow 0 0

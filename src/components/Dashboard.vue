@@ -95,7 +95,7 @@
             )
 
     firebase.database()
-        .ref('/data')
+        .ref('/data')  //здесь нужен урл '/:mac'
         .on(
             'child_added',
             child => {

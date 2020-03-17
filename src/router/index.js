@@ -12,9 +12,11 @@ const router = new Router ({
             path: '/',
             name: 'SignIn',
             component: SignIn,
+
             beforeEnter(to, from, next) {
                 if (localStorage.getItem('auth') === 'true') {
-                    next('/dashboard')
+                    // next({ path: '/:mac', params: {}})
+                    next('/:mac')
                 }
                 else {
                     next()
@@ -22,7 +24,7 @@ const router = new Router ({
             }
         },
         {
-            path: '/dashboard',
+            path: '/:mac',
             name: 'Dashboard',
             component: Dashboard,
             beforeEnter(to, from, next) {
